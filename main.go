@@ -14,15 +14,15 @@ func NewTransaction(parent *Transaction) *Transaction {
 	return &Transaction{data: m}
 }
 
-// store k,v to current data
 func (n *Transaction) Write(k, v string) {
-	d := n.data
-	d[k] = v
+	n.data[k] = v
 }
 
-func (n *Transaction) Read(k string) string {
-	d := n.data
-	return d[k]
+func (t *Transaction) Read(k string) string {
+	if v, ok := t.data[k]; ok {
+		return v
+	}
+	return "Key not found: " + k
 }
 
 func main() {
@@ -33,4 +33,5 @@ func main() {
 	head.Write("cat", "cat")
 	fmt.Println(len(head.data))
 	fmt.Println(head.Read("cat"))
+	fmt.Println(head.Read("bat"))
 }
