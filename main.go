@@ -4,32 +4,30 @@ import (
 	"fmt"
 )
 
-// represents transaction with a hash of operations
-type Node struct {
-	parent *Node
+type Transaction struct {
+	parent *Transaction
 	data   map[string]string
 }
 
-func NewNode(parent *Node) *Node {
+func NewTransaction(parent *Transaction) *Transaction {
 	m := make(map[string]string)
-	return &Node{data: m}
+	return &Transaction{data: m}
 }
 
-// store k,v to current node's data
-func (n *Node) Write(k, v string) string {
+// store k,v to current data
+func (n *Transaction) Write(k, v string) {
 	d := n.data
 	d[k] = v
-	return ""
 }
 
-func (n *Node) Read(k string) string {
+func (n *Transaction) Read(k string) string {
 	d := n.data
 	return d[k]
 }
 
 func main() {
-	// initialize with new node as head
-	head := NewNode(nil)
+	// initialize with new no parent
+	head := NewTransaction(nil)
 
 	fmt.Println(len(head.data))
 	head.Write("cat", "cat")
