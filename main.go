@@ -34,6 +34,11 @@ func (n *Node) Read(k string) string {
 	return d[k]
 }
 
+func (r *Root) Start() {
+	// newNode where parent is current
+	// Then reset Head's current to new node
+}
+
 func main() {
 	// initialize program with a default Node and set to currentNode
 	root := initialize()
