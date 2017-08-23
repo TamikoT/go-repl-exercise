@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"reflect"
 )
 
 // represents transaction with a hash of operations
@@ -11,15 +10,9 @@ type Node struct {
 	data   map[string]string
 }
 
-type Root struct {
-	head *Node
-}
-
-// start of REPL: make first Node and set as head
-func initialize() *Root {
+func NewNode(parent *Node) *Node {
 	m := make(map[string]string)
-	newNode := &Node{parent: nil, data: m}
-	return &Root{head: newNode}
+	return &Node{data: m}
 }
 
 // store k,v to current node's data
@@ -35,13 +28,11 @@ func (n *Node) Read(k string) string {
 }
 
 func main() {
-	// initialize program with a default Node and set to currentNode
-	root := initialize()
-	current := root.head
-	fmt.Println(reflect.TypeOf(root))
+	// initialize with new node as head
+	head := NewNode(nil)
 
-	fmt.Println(len(current.data))
-	current.Write("cat", "cat")
-	fmt.Println(len(current.data))
-	fmt.Println(current.Read("cat"))
+	fmt.Println(len(head.data))
+	head.Write("cat", "cat")
+	fmt.Println(len(head.data))
+	fmt.Println(head.Read("cat"))
 }
