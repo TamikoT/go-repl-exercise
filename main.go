@@ -2,51 +2,50 @@ package main
 
 import (
 	"fmt"
-	"reflect"
 )
 
-// represents transaction with a hash of operations
-type Node struct {
-	parent *Node
+type Transaction struct {
+	parent *Transaction
 	data   map[string]string
 }
 
-type Root struct {
-	head *Node
-}
-
-// start of REPL: make first Node and set as head
-func initialize() *Root {
+func NewTransaction(p *Transaction) *Transaction {
 	m := make(map[string]string)
-	newNode := &Node{parent: nil, data: m}
-	return &Root{head: newNode}
+	return &Transaction{parent: p, data: m}
 }
 
-// store k,v to current node's data
-func (n *Node) Write(k, v string) string {
-	d := n.data
-	d[k] = v
-	return ""
+func (n *Transaction) Write(k, v string) {
+	n.data[k] = v
 }
 
-func (n *Node) Read(k string) string {
-	d := n.data
-	return d[k]
+func (t *Transaction) Read(k string) string {
+	if v, ok := t.data[k]; ok {
+		return v
+	}
+	return "Key not found: " + k
 }
 
-func (r *Root) Start() {
-	// newNode where parent is current
-	// Then reset Head's current to new node
+func Start(head *Transaction) *Transaction {
+	// parent is current
+	n := NewTransaction(head)
+	// copy map data
+	for k, v := range head.data {
+		n.data[k] = v
+	}
+	return n
 }
 
 func main() {
-	// initialize program with a default Node and set to currentNode
-	root := initialize()
-	current := root.head
-	fmt.Println(reflect.TypeOf(root))
+	// initialize with new no parent
+	head := NewTransaction(nil)
 
-	fmt.Println(len(current.data))
-	current.Write("cat", "cat")
-	fmt.Println(len(current.data))
-	fmt.Println(current.Read("cat"))
+	fmt.Println(head)
+	fmt.Println(len(head.data))
+	head.Write("cat", "cat")
+	fmt.Println(len(head.data))
+	fmt.Println(head.Read("cat"))
+	fmt.Println(head.Read("bat"))
+	head = Start(head)
+	fmt.Println(head)
+	fmt.Println(len(head.data))
 }
