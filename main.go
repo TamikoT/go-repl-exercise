@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"strings"
 )
 
 type Transaction struct {
@@ -18,11 +21,11 @@ func (n *Transaction) Write(k, v string) {
 	n.data[k] = v
 }
 
-func (t *Transaction) Read(k string) string {
+func (t *Transaction) Read(k string) (string, error) {
 	if v, ok := t.data[k]; ok {
-		return v
+		return v, nil
 	}
-	return "Key not found: " + k
+	return "", fmt.Errorf("Key not found: %s", k)
 }
 
 func Start(head *Transaction) *Transaction {
@@ -48,4 +51,22 @@ func main() {
 	head = Start(head)
 	fmt.Println(head)
 	fmt.Println(len(head.data))
+
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		input := strings.Split(scanner.Text(), " ")
+		if input[0] == "quit" {
+			break
+		} else {
+			switch input[0] {
+			case "start":
+				fmt.Println("Start called")
+			case "write":
+				fmt.Println("Write called")
+			}
+		}
+		if err := scanner.Err(); err != nil {
+			fmt.Fprintln(os.Stderr, "reading standard input:", err)
+		}
+	}
 }
