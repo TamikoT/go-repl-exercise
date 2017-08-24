@@ -52,14 +52,14 @@ func main() {
 		if input[0] == "quit" {
 			break
 		} else {
-			switch input[0] {
-			case "start":
+			switch strings.ToUpper(input[0]) {
+			case "START":
 				fmt.Println("Start called")
 				Start(head)
-			case "write":
+			case "WRITE":
 				head.Write(input[1], input[2])
 				fmt.Println(head.data) //to see if it's working...
-			case "read":
+			case "READ":
 				if val, err := head.Read(input[1]); err == nil {
 					fmt.Println(val)
 				} else {
