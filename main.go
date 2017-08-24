@@ -42,12 +42,6 @@ func main() {
 	// initialize with new no parent
 	head := NewTransaction(nil)
 
-	fmt.Println(head)
-	fmt.Println(len(head.data))
-	head.Write("cat", "cat")
-	fmt.Println(len(head.data))
-	fmt.Println(head.Read("cat"))
-	fmt.Println(head.Read("bat"))
 	head = Start(head)
 	fmt.Println(head)
 	fmt.Println(len(head.data))
@@ -61,8 +55,11 @@ func main() {
 			switch input[0] {
 			case "start":
 				fmt.Println("Start called")
+				Start(head)
 			case "write":
-				fmt.Println("Write called")
+				head.Write(input[1], input[2])
+				fmt.Println(head.data) //to see if it's working...
+			case "read":
 			}
 		}
 		if err := scanner.Err(); err != nil {
