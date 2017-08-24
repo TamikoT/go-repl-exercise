@@ -65,6 +65,8 @@ func main() {
 				} else {
 					fmt.Println(err)
 				}
+			default:
+				fmt.Println("ERROR: Unknown command: " + input[0])
 			}
 		}
 		if err := scanner.Err(); err != nil {
