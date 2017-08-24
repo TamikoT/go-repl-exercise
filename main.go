@@ -60,6 +60,7 @@ func main() {
 				head.Write(input[1], input[2])
 				fmt.Println(head.data) //to see if it's working...
 			case "read":
+				fmt.Println(head.Read(input[1]))
 			}
 		}
 		if err := scanner.Err(); err != nil {
