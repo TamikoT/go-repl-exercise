@@ -27,6 +27,12 @@ func Start(head *Transaction) *Transaction {
 	return n
 }
 
+func Abort(head *Transaction) *Transaction {
+	head = head.parent
+	// destroy current node?
+	return head
+}
+
 func (n *Transaction) Write(k, v string) {
 	n.data[k] = v
 }
@@ -42,18 +48,21 @@ func main() {
 	// initialize with no parent
 	head := NewTransaction(nil)
 	fmt.Println(head) // to see if it's working...
+	committed := true
 
 	scanner := bufio.NewScanner(os.Stdin)
+	fmt.Print("> ")
 	for scanner.Scan() {
+		fmt.Print("> ")
 		input := strings.Split(scanner.Text(), " ")
 		if input[0] == "quit" {
 			break
 		} else {
 			switch strings.ToUpper(input[0]) {
 			case "START":
-				fmt.Println("Start called")
-				head = Start(head) //to see if it's working...
-				fmt.Println(head)  //to see if it's working...
+				committed = false
+				head = Start(head)
+				fmt.Println(head) //to see if it's working...
 			case "WRITE":
 				head.Write(input[1], input[2])
 			case "READ":
@@ -62,6 +71,15 @@ func main() {
 				} else {
 					fmt.Println(err)
 				}
+			case "ABORT":
+				if committed == true {
+					fmt.Println("ERROR: ABORT called with no active transaction.")
+				} else {
+					head = Abort(head)
+					fmt.Println(head) // to see if it's working...
+				}
+			case "COMMIT":
+				committed = true
 			default:
 				fmt.Println("ERROR: Unknown command: " + input[0])
 			}
