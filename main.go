@@ -27,6 +27,14 @@ func Start(head *Transaction) *Transaction {
 	return n
 }
 
+func isHead(t *Transaction) bool {
+	if t.parent == nil {
+		return true
+	} else {
+		return false
+	}
+}
+
 func Abort(head *Transaction) *Transaction {
 	head = head.parent
 	// destroy current node?
@@ -48,7 +56,6 @@ func main() {
 	// initialize with no parent
 	head := NewTransaction(nil)
 	fmt.Println(head) // to see if it's working...
-	committed := true
 
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Print("> ")
@@ -60,7 +67,6 @@ func main() {
 		} else {
 			switch strings.ToUpper(input[0]) {
 			case "START":
-				committed = false
 				head = Start(head)
 				fmt.Println(head) //to see if it's working...
 			case "WRITE":
@@ -72,14 +78,14 @@ func main() {
 					fmt.Println(err)
 				}
 			case "ABORT":
-				if committed == true {
+				if isHead(head) == true {
 					fmt.Println("ERROR: ABORT called with no active transaction.")
 				} else {
 					head = Abort(head)
 					fmt.Println(head) // to see if it's working...
 				}
 			case "COMMIT":
-				committed = true
+				// TODO: change committed to collapst the last transactions into the last
 			default:
 				fmt.Println("ERROR: Unknown command: " + input[0])
 			}
