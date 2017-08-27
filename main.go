@@ -32,9 +32,15 @@ func isHead(t *Transaction) bool {
 	}
 }
 
+// set head to previous
 func Abort(head *Transaction) *Transaction {
-	head = head.parent
-	// destroy current node?
+	return head.parent
+}
+
+// delete previous node + current points to parent's parent
+func Commit(head *Transaction) *Transaction {
+	grandparent := head.parent.parent
+	head.parent = grandparent
 	return head
 }
 
@@ -82,10 +88,12 @@ func main() {
 					fmt.Println(head) // to see if it's working...
 				}
 			case "COMMIT":
-				// TODO: change committed to collapst the last transactions into the last
+				head = Commit(head)
+				fmt.Println(head)
 			default:
 				fmt.Println("ERROR: Unknown command: " + input[0])
 			}
+
 		}
 		if err := scanner.Err(); err != nil {
 			fmt.Fprintln(os.Stderr, "reading standard input:", err)
