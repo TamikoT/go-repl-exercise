@@ -12,21 +12,18 @@ type Transaction struct {
 	data   map[string]string
 }
 
-func NewTransaction(p *Transaction) *Transaction {
-	m := make(map[string]string)
-	return &Transaction{parent: p, data: m}
-}
-
-func Start(head *Transaction) *Transaction {
-	// parent is current
-	n := NewTransaction(head)
-	// copy map data
-	for k, v := range head.data {
-		n.data[k] = v
+func Start(p *Transaction) *Transaction {
+	d := make(map[string]string)
+	t := &Transaction{parent: p, data: d}
+	if !(p == nil) {
+		for k, v := range p.data {
+			t.data[k] = v
+		}
 	}
-	return n
+	return t
 }
 
+// returns true if current node is head
 func isHead(t *Transaction) bool {
 	if t.parent == nil {
 		return true
@@ -54,7 +51,7 @@ func (t *Transaction) Read(k string) (string, error) {
 
 func main() {
 	// initialize with no parent
-	head := NewTransaction(nil)
+	head := Start(nil)
 	fmt.Println(head) // to see if it's working...
 
 	scanner := bufio.NewScanner(os.Stdin)
