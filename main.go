@@ -60,7 +60,6 @@ func (t *transaction) read(k string) (string, error) {
 func (t *transaction) delete(k string) error {
 	if _, ok := t.data[k]; ok {
 		delete(t.data, k)
-		fmt.Println("Key deleted: " + k)
 		return nil
 	}
 	return fmt.Errorf("Key not found: %s", k)
@@ -72,10 +71,11 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Print("> ")
 	for scanner.Scan() {
-		fmt.Print("> ")
+
 		input := strings.Split(scanner.Text(), " ")
 
 		if input[0] == "quit" {
+			fmt.Println("Exiting...")
 			break
 		}
 
@@ -100,7 +100,6 @@ func main() {
 			}
 		case "COMMIT":
 			head = commit(head)
-			fmt.Println(head)
 		default:
 			fmt.Println("ERROR: Unknown command: " + input[0])
 		}
@@ -108,5 +107,7 @@ func main() {
 		if err := scanner.Err(); err != nil {
 			fmt.Fprintln(os.Stderr, "reading standard input:", err)
 		}
+
+		fmt.Print("> ")
 	}
 }
