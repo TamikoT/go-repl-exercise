@@ -55,6 +55,15 @@ func (t *Transaction) Read(k string) (string, error) {
 	return "", fmt.Errorf("Key not found: %s", k)
 }
 
+func (t *Transaction) Delete(k string) error {
+	if _, ok := t.data[k]; ok {
+		delete(t.data, k)
+		fmt.Println("Key deleted: " + k)
+		return nil
+	}
+	return fmt.Errorf("Key not found: %s", k)
+}
+
 func main() {
 	// initialize with no parent
 	head := Start(nil)
@@ -80,6 +89,8 @@ func main() {
 				} else {
 					fmt.Println(err)
 				}
+			case "DELETE":
+				head.Delete(input[1])
 			case "ABORT":
 				if isHead(head) == true {
 					fmt.Println("ERROR: ABORT called with no active transaction.")
