@@ -27,8 +27,11 @@ func start(parent *transaction) *transaction {
 }
 
 // abort : sets head to previous transaction
-func abort(head *transaction) *transaction {
-	return head.parent
+func abort(head *transaction) (*transaction, error) {
+	if head.parent == nil {
+		return head, fmt.Errorf("ERROR: ABORT called with no active transaction.")
+	}
+	return head.parent, nil
 }
 
 // commit : deletes parent + points current node to parent's parent
@@ -75,7 +78,7 @@ func main() {
 		input := strings.Split(scanner.Text(), " ")
 
 		if input[0] == "quit" {
-			fmt.Println("Exiting...")
+			fmt.Fprintln(os.Stderr, "Exiting...")
 			break
 		}
 
@@ -85,18 +88,18 @@ func main() {
 		case "WRITE":
 			head.write(input[1], input[2])
 		case "READ":
-			if val, err := head.read(input[1]); err == nil {
-				fmt.Println(val)
+			if val, err := head.read(input[1]); err != nil {
+				fmt.Fprintln(os.Stderr, err)
 			} else {
-				fmt.Println(err)
+				fmt.Println(val)
 			}
 		case "DELETE":
 			head.delete(input[1])
 		case "ABORT":
-			if isTail(head) == true {
-				fmt.Println("ERROR: ABORT called with no active transaction.")
+			if val, err := abort(head); err != nil {
+				fmt.Fprintln(os.Stderr, err)
 			} else {
-				head = abort(head)
+				head = val
 			}
 		case "COMMIT":
 			head = commit(head)
@@ -104,10 +107,9 @@ func main() {
 			fmt.Println("ERROR: Unknown command: " + input[0])
 		}
 
-		if err := scanner.Err(); err != nil {
-			fmt.Fprintln(os.Stderr, "reading standard input:", err)
-		}
-
 		fmt.Print("> ")
+	}
+	if err := scanner.Err(); err != nil {
+		fmt.Fprintln(os.Stderr, "reading standard input:", err)
 	}
 }
